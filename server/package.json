@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "bunx --bun prisma generate && tsc && cp -r ./src/public ./dist/public",
+    "build": "rm -r ./dist/**/**; bunx --bun prisma generate && tsc && cp -r ./src/public ./dist",
     "start": "NODE_ENV=production bun ./dist/index.mjs",
     "dev": "bun ./src/index.mjs"
   },
