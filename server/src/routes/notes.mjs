@@ -14,9 +14,14 @@ router.post("/save", async (req, res, next) => {
     res.status(500).send("Interal Sever Error")
 })
 
-router.get("/list", async (req, res, next) => {
+router.get("/all-notes", async (req, res, next) => {
   const notes = await store.readAll();
   res.json(notes)
+})
+
+router.get("/read/:id", async (req, res, next) => {
+  const note = await store.read( Number(req.params.id) );
+  res.json(note)
 })
 
 router.delete("/destroy/:noteId", async (req, res) => {

@@ -18,7 +18,7 @@ APP.use(express.json())
 APP.use(express.urlencoded({extended: true}))
 
 APP.use(cookieParser());
-APP.use("/notes", notesRouter)
+APP.use("/api/notes", notesRouter)
 
 APP.use(express.static(path.join(rootDir , "public")))
 

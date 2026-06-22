@@ -22,4 +22,22 @@ export class NotesStore {
     const notes = await prisma.notes.findMany();
     return notes
   }
+  async read(id) {
+    const note = await prisma.notes.findUnique({
+      where: {
+        id: Number(id)
+      }
+    });
+    return note
+  }
+  async update(id, title, body) {
+    const note = await prisma.notes.update({
+      where: {id: id}, 
+      data: {
+        title: title,
+        body: body
+      }
+    })
+    return note
+  }
 }
