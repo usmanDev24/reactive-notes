@@ -2,7 +2,7 @@ import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 
 import "./index.css"
-import Root from "./Root.tsx"
+import RootLayout from "./routes/root"
 import { createBrowserRouter } from "react-router"
 import { RouterProvider } from "react-router/dom"
 import { ThemeProvider } from "@/components/theme-provider.tsx"
@@ -10,7 +10,7 @@ import { ThemeProvider } from "@/components/theme-provider.tsx"
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Root></Root>
+    element: <RootLayout/>
   }
 ])
 createRoot(document.getElementById("root")!).render(
