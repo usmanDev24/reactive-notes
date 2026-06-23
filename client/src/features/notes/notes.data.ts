@@ -11,7 +11,7 @@ export async function getReq(url : string) {
       const text = await res.text();
   
       return JSON.parse(text)
-    } else return res.status
+    } else throw new Error(res.statusText)
   } catch (error) {
     console.error(error)
     throw error

@@ -16,10 +16,8 @@ import { Link } from "react-router"
 export default function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
-      {/* 1. ELEVATED HEADER DESIGN */}
       <SidebarHeader className="border-b border-sidebar-border/50 py-4 px-3">
-        <div className="flex items-center gap-3 px-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
-          {/* Beautifully scaled, colored wrapper for the prominent icon */}
+        <Link to={'/'} className="flex items-center gap-3 px-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
             <NotebookPenIcon className="h-5 w-5" />
           </div>
@@ -27,7 +25,7 @@ export default function AppSidebar() {
           <span className="font-semibold text-sidebar-foreground tracking-tight text-sm truncate group-data-[collapsible=icon]:hidden">
             DevNotes
           </span>
-        </div>
+        </Link>
       </SidebarHeader>
 
       {/* 2. NAVIGATION CONTENT */}
