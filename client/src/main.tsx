@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client"
 
 import "./index.css"
 import RootLayout from "./routes/index"
-import { createBrowserRouter } from "react-router"
+import { createBrowserRouter, redirect } from "react-router"
 import { RouterProvider } from "react-router/dom"
 import { ThemeProvider } from "@/components/theme-provider.tsx"
 import ErrorPage from "./features/errorpage"
@@ -12,14 +12,19 @@ import { NoteDetails } from "./features/notes/notes.ui"
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/", 
+    loader: () => redirect("/notes")
+  },
+
+  {
+    path: '/notes',
     element: <RootLayout/>,
     loader: allNotesLoader,
     errorElement: <ErrorPage></ErrorPage>,
     children: [
-      {
-        path: "/note/view/:id",
-        element: <NoteDetails></NoteDetails>,
+      { 
+        path: "/notes/:id",
+        element: <NoteDetails ></NoteDetails>,
         loader: noteLoader,
         
       }
