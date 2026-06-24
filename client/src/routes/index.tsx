@@ -1,10 +1,5 @@
 import { TooltipProvider } from "@/components/ui/tooltip"
-import {
-  Outlet,
-  useLoaderData,
-  useOutlet,
-  useLocation,
-} from "react-router" // Imported useOutlet
+import { Outlet, useLoaderData, useOutlet, useLocation } from "react-router" // Imported useOutlet
 
 import { PenLine, TextIcon } from "lucide-react"
 import AppSidebar from "@/components/app-sidebar"
@@ -40,10 +35,12 @@ export default function RootLayout() {
             {!hasActiveChild ? (
               <div className="sticky z-10 flex h-23 shrink-0 flex-col items-center gap-2 bg-background p-4 shadow-lg shadow-background">
                 <div className="flex w-full flex-row items-center justify-between">
-                   <div className=" flex flex-row gap-4">
-                    <p className=" rounded-2xl p-1 bg-secondary"><SidebarTrigger/></p>
+                  <div className="flex flex-row gap-4">
+                    <p className="rounded-2xl bg-secondary p-1">
+                      <SidebarTrigger />
+                    </p>
                     <FolderHeader />
-                    </div> 
+                  </div>
                   <Button variant={"default"}>
                     <PenLine /> Add
                   </Button>
@@ -54,7 +51,7 @@ export default function RootLayout() {
               ""
             )}
             <main className="flex-1 overflow-y-auto">
-              {hasActiveChild ? ( 
+              {hasActiveChild ? (
                 <Outlet />
               ) : (
                 <div className="flex flex-col gap-3 p-4">
@@ -71,7 +68,10 @@ export default function RootLayout() {
             <div className="flex h-screen flex-col gap-2 border-r">
               <div className="sticky z-10 flex h-23 shrink-0 flex-col items-center gap-2 bg-background p-4 shadow-xl shadow-background">
                 <div className="flex w-full flex-row items-center justify-between">
-                  <FolderHeader />
+                  <div className="flex items-center gap-2">
+                    <SidebarTrigger className=" bg-secondary p-2" size={"icon-lg"}/>
+                    <FolderHeader />
+                  </div>
                   <Button variant={"default"}>
                     <PenLine /> Add
                   </Button>

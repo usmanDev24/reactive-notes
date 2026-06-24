@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/noto-sans";
@@ -131,4 +132,20 @@
   html {
     @apply font-sans;
     }
+  
+}
+@layer components {
+  .is-active {
+    @apply text-accent bg-sidebar
+  }
+  .tiptap {
+
+  }
+  .ProseMirror {
+    @apply p-2 
+  }
+  .ProseMirror-focused {
+    @apply border border-dashed outline-0
+  }
+  
 }

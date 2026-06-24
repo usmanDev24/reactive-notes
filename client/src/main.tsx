@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/components/theme-provider.tsx"
 import ErrorPage from "./features/errorpage"
 import { allNotesLoader, noteLoader } from "./features/notes/notes.data"
 import { NoteDetails } from "./features/notes/notes.ui"
+import Editor from "./features/editor/edit.ui"
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
         element: <NoteDetails ></NoteDetails>,
         loader: noteLoader,
         
+      },
+      {
+        path: "/notes/:id/edit",
+        element : <Editor></Editor>
       }
     ]
   }
