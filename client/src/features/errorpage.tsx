@@ -11,8 +11,8 @@ export default function ErrorPage() {
         <EmptyMedia variant={"icon"}>
           <WrenchOff/>
         </EmptyMedia>
-        <EmptyTitle>Error {error.statusText}</EmptyTitle>
-        <EmptyDescription>{error.message}</EmptyDescription>
+        <EmptyTitle>Error {error.message}</EmptyTitle>
+        <EmptyDescription>{error.cause}</EmptyDescription>
       </EmptyHeader>
     </Empty>
   );

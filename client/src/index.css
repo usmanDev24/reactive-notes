@@ -15,13 +15,13 @@
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.147 0.004 49.3);
     --primary: oklch(0.841 0.238 128.85);
-    --primary-foreground: oklch(0.405 0.101 131.063);
+    --primary-foreground: oklch(0.25 0.101 131.063);
     --secondary: oklch(0.967 0.001 286.375);
     --secondary-foreground: oklch(0.21 0.006 285.885);
     --muted: oklch(0.96 0.002 17.2);
     --muted-foreground: oklch(0.547 0.021 43.1);
     --accent: oklch(0.841 0.238 128.85);
-    --accent-foreground: oklch(0.405 0.101 131.063);
+    --accent-foreground: oklch(0.25 0.101 131.063);
     --destructive: oklch(0.577 0.245 27.325);
     --border: oklch(0.922 0.005 34.3);
     --input: oklch(0.922 0.005 34.3);
@@ -50,13 +50,13 @@
     --popover: oklch(0.214 0.009 43.1);
     --popover-foreground: oklch(0.986 0.002 67.8);
     --primary: oklch(0.768 0.233 130.85);
-    --primary-foreground: oklch(0.405 0.101 131.063);
+    --primary-foreground: oklch(0.25 0.101 131.063);
     --secondary: oklch(0.274 0.006 286.033);
     --secondary-foreground: oklch(0.985 0 0);
     --muted: oklch(0.268 0.011 36.5);
     --muted-foreground: oklch(0.714 0.014 41.2);
     --accent: oklch(0.768 0.233 130.85);
-    --accent-foreground: oklch(0.405 0.101 131.063);
+    --accent-foreground: oklch(0.25 0.101 131.063);
     --destructive: oklch(0.704 0.191 22.216);
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
@@ -145,7 +145,7 @@
     @apply p-2 
   }
   .ProseMirror-focused {
-    @apply border border-dashed outline-0
+    @apply border-0 outline-0
   }
   
 }
