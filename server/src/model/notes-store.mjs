@@ -25,7 +25,7 @@ export class NotesStore {
   async read(id) {
     const note = await prisma.notes.findUnique({
       where: {
-        id: Number(id)
+        id: id
       }
     });
     return note

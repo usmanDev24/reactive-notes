@@ -6,28 +6,34 @@ export const router =  Router();
 
 const store = new NotesStore();
 
-router.post("/save", async (req, res, next) => {
+router.post("/create", async (req, res, next) => {
   const note = await  store.create(req.body.title, req.body.noteBody)
   if (note)
     res.json(note)
   else 
     res.status(500).send("Interal Sever Error")
 })
-
+router.post("/update", async (req, res, next) => {
+  const note = await  store.update( req.body.id, req.body.title, req.body.noteBody)
+  if (note)
+    res.json(note)
+  else 
+    res.status(500).send("Interal Sever Error")
+})
 router.get("/all-notes", async (req, res, next) => {
   const notes = await store.readAll();
   res.json(notes)
 })
 
 router.get("/read/:id", async (req, res, next) => {
-  const note = await store.read( Number(req.params.id) );
+  const note = await store.read(req.params.id);
   res.json(note)
 })
 
-router.delete("/destroy/:noteId", async (req, res) => {
-  const deleted = await store.destroy(req.params.noteId);
+router.post("/destroy", async (req, res) => {
+  const deleted = await store.destroy(req.body.id);
   if (deleted)
-    res.send(true)
+    res.json({deleted: true})
   else 
     res.status(500).send(null)
 })

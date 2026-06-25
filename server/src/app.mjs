@@ -14,7 +14,7 @@ export  const  APP = express();
 
 APP.use(logger("dev"))
 APP.use(cors());
-APP.use(express.json())
+APP.use(express.json({type: "application/json"}))
 APP.use(express.urlencoded({extended: true}))
 
 APP.use(cookieParser());
