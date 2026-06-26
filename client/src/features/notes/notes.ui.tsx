@@ -18,20 +18,30 @@ import { useIsMobile } from "@/hooks/use-mobile"
 
 export function NoteCard({ note }) {
   return (
-    <NavLink
-      to={`/notes/${note.id}`}
-      className={({ isActive }) => {
-        return isActive
-          ? "group border-b bg-accent/20 p-4 px-6 hover:bg-accent/20 dark:bg-accent/10"
-          : "group border-b p-4 px-6 hover:bg-accent/10"
-      }}
-      key={note.id}
-    >
-      <div className="flex flex-row items-center justify-between">
-        <h2 className="line-clamp-2 font-mono text-lg font-medium tracking-wide group-hover:text-accent/95">
-          {note.title}
-        </h2>
+    <div className="group relative border-b" key={note.id}>
+      {/* 1. The NavLink now strictly handles navigation and background styling */}
+      <NavLink
+        to={`/notes/${note.id}`}
+        className={({ isActive }) => {
+          return isActive
+            ? "block bg-accent/20 p-4 px-6 dark:bg-accent/10"
+            : "block p-4 px-6 group-hover:bg-accent/10"
+        }}
+      >
+        {/* Added pr-12 to keep the title text from running underneath the absolute menu button */}
+        <div className=" pr-8">
+          <h2 className="line-clamp-2 font-mono text-lg font-medium tracking-wide group-hover:text-accent/95">
+            {note.title}
+          </h2>
+        </div>
+        <div
+          className="mt-2 line-clamp-2 text-foreground/70"
+          dangerouslySetInnerHTML={{ __html: note.body }}
+        ></div>
+      </NavLink>
 
+      {/* 2. Popover is pulled completely OUTSIDE the NavLink and positioned absolutely */}
+      <div className=" absolute top-4 right-6 z-10">
         <Popover>
           <PopoverTrigger asChild>
             <Button variant={"ghost"} size={"icon-sm"}>
@@ -42,17 +52,13 @@ export function NoteCard({ note }) {
             <Form action={`/notes/${note.id}/delete`} method="post">
               <input hidden name="id" defaultValue={note.id}></input>
               <Button type="submit" variant={"destructive"}>
-                <Trash2Icon></Trash2Icon> Delete
+                <Trash2Icon /> Delete
               </Button>
             </Form>
           </PopoverContent>
         </Popover>
       </div>
-      <div
-        className="line-clamp-2 text-foreground/70"
-        dangerouslySetInnerHTML={{ __html: note.body }}
-      ></div>
-    </NavLink>
+    </div>
   )
 }
 export function NoteDetails() {

@@ -1,6 +1,7 @@
 import { useEditor, Tiptap } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import { TextStyleKit } from "@tiptap/extension-text-style"
+import Placeholder from '@tiptap/extension-placeholder'
 import { MenuBar } from "./tiptap-editor"
 import { Form, useLoaderData } from "react-router"
 import { useNavigate } from "react-router"
@@ -13,7 +14,9 @@ export default function Editor() {
   const bodyInput = useRef(null)
   const [text, setText] = useState(note?.title)
   const editor = useEditor({
-    extensions: [StarterKit, TextStyleKit],
+    extensions: [StarterKit, TextStyleKit, Placeholder.configure({
+      placeholder: "Details..."
+    })],
     content: note?.body,
     onUpdate: ({ editor }) => {
       if (bodyInput.current) {
@@ -85,7 +88,8 @@ export default function Editor() {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Title"
-                className="col-start-1 text-3xl row-start-1 h-full w-full resize-none focus:outline-0 overflow-hidden bg-background px-3 py-4  focus-visible:outline-none"
+                name="title"
+                className="col-start-1 text-3xl row-start-1 h-full w-full resize-none focus:outline-0 overflow-hidden bg-background px-3 pt-4 pb-0  focus-visible:outline-none"
               />
             </div>
             <input
@@ -94,9 +98,9 @@ export default function Editor() {
               name="noteBody"
               ref={bodyInput}
             ></input>
-             <span className=" p-4 text-foreground/50">Note Details</span>
-            <div className="prose border max-w-none dark:prose-invert prose-h1:mb-4 prose-p:my-1">
-              <Tiptap.Content />
+  
+            <div className="prose max-w-none dark:prose-invert prose-h1:mb-4 prose-p:my-1">
+              <Tiptap.Content placeholder="" />
             </div>
           </div>
         </Tiptap>
@@ -106,8 +110,11 @@ export default function Editor() {
 }
 export function EditorCreate() {
   const bodyInput = useRef(null)
+  const [text, setText] = useState("")
   const editor = useEditor({
-    extensions: [StarterKit, TextStyleKit],
+    extensions: [StarterKit, TextStyleKit, Placeholder.configure({
+      placeholder: "Details..."
+    })],
     content: "",
     onUpdate: ({ editor }) => {
       if (bodyInput.current) {
@@ -163,22 +170,34 @@ export function EditorCreate() {
             <div className="sticky top-10 z-10 sm:top-14">
               <MenuBar />
             </div>
-            
-            <textarea
-              defaultValue={""}
-              name="title"
-              className="h-auto resize-y w-full p-4 text-2xl focus:outline-0"
-              placeholder="Title"
-            ></textarea>
+            <div className="grid h-max w-full auto-rows-min grid-cols-1">
+              {/* 1. The Ghost Mirror */}
+              {/* Note: The trailing space character ensure empty newlines render text container height accurately */}
+              <div
+                className="invisible col-start-1 row-start-1  px-3 py-2  text-3xl whitespace-pre-wrap"
+                aria-hidden="true"
+              >
+                {text + (text.endsWith("\n") ? " " : "")}
+              </div>
+
+              {/* 2. The Interactive Textarea */}
+              <textarea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Title"
+                name="title"
+                className="col-start-1 text-3xl row-start-1 h-full w-full resize-none focus:outline-0 overflow-hidden bg-background px-3 pt-4 pb-0  focus-visible:outline-none"
+              />
+            </div>
             <input
               hidden
               defaultValue={""}
               name="noteBody"
               ref={bodyInput}
             ></input>
-            <span className=" p-4 text-foreground/50">Note Details</span>
-            <div className="prose border max-w-none dark:prose-invert prose-h1:mb-4 prose-p:my-1">
-              <Tiptap.Content />
+
+            <div className="prose max-w-none dark:prose-invert prose-h1:mb-4 prose-p:my-1">
+              <Tiptap.Content  />
             </div>
           </div>
         </Tiptap>
