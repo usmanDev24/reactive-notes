@@ -1,8 +1,8 @@
 import { createServer } from "node:http";
-import { APP } from "./app.mjs";
+import { app } from "./app.mjs";
 
 const PORT = process.env.PORT || 3000
-const server = createServer(APP);
+const server = createServer(app);
 server.listen(PORT)
 
 server.on("listening", () => {

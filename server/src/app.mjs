@@ -22,6 +22,14 @@ app.use(cookieParser());
 app.use("/api/notes", notesRouter)
 
 app.use(express.static(path.join(rootDir , "public")))
-
+app.use((req, res, next) => {
+  try {
+    next(new AppError("NOT FOUND", 404, 404))
+  } catch (error) {
+    next(error)
+  }
+  
+})
+app.use(globalErrorHandler)
 
 

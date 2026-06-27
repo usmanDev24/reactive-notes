@@ -27,7 +27,7 @@ export const globalErrorHandler = (err, req, res, next) => {
 };
 
 process.on('uncaughtException', function (error, origin) {
-    console.error(`I have crached!!! -\n    Error: ${error} \n   Origin: ${origin}`)
+    console.error(`I have crached!!! -\n    Error: ${error.message || error}`)
 })
 
 process.on('unhandledRejection', (reason, p) => {
