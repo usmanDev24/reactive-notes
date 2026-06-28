@@ -12,10 +12,64 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id            String        @id @default(uuid()) @db.Uuid()
+  userName      String        @unique @db.VarChar(256)
+  provider      String        @db.VarChar(256)
+  googleId      String?       @unique @db.VarChar(256)
+  password      String?       @db.Text()
+  email         String?       @db.VarChar(256)
+  isVerified    Boolean       @default(false)
+  firstName     String        @db.VarChar(256)
+  lastName      String        @db.VarChar(256)
+  avatarUrl     String?
+  createdAt     DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(3)
+  ownedFolders  Folder[]
+  sharedFolders FolderShare[]
+  notes         Notes[]
+}
+
+model Folder {
+  id         String        @id @default(uuid()) @db.Uuid()
+  name       String        @db.VarChar(256)
+  notes      Notes[]
+  createdAt  DateTime      @default(now()) @db.Timestamptz(3)
+  user       User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String?       @db.Uuid()
+  sharedWith FolderShare[]
+}
+
+model FolderShare {
+  id       String  @id @default(uuid()) @db.Uuid
+  user     User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String? @db.Uuid()
+  role     String  @default("VIEWER")
+  folder   Folder? @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  folderId String? @db.Uuid()
+
+  @@unique([folderId, userId])
+}
+
 model Notes {
-  id        String   @id @default(uuid())
+  id        String   @id @default(uuid()) @db.Uuid()
   title     String   @db.Text()
   body      String   @db.Text()
-  createdAt DateTime @db.Timestamptz(6) @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  media     Media[]
+  folders   Folder[]
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @db.Uuid()
+}
+
+model Media {
+  id        String   @id @default(uuid()) @db.Uuid()
+  type      String   @db.VarChar(256)
+  name      String   @db.VarChar(256)
+  url       String   @db.VarChar(256)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  notes     Notes?   @relation(fields: [notesId], references: [id], onDelete: Cascade)
+  notesId   String?  @db.Uuid()
 }
