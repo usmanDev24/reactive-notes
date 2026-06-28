@@ -6,11 +6,16 @@
   "scripts": {
     "build": "rm -r ./dist/**/**; bunx --bun prisma generate && tsc && cp -r ./src/public ./dist",
     "start": "NODE_ENV=production bun ./dist/index.mjs",
-    "dev": "bun ./src/index.mjs"
+    "dev": "NODE_ENV=development dotenvx run -f .env.dev -- bun ./src/index.mjs",
+    "prisma-dev": "NODE_ENV=development dotenvx run -f .env.dev -- bunx --bun prisma"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/bun": "latest",
+    "@types/express": "^5.0.6",
     "@types/node": "^25.9.2",
+    "@types/passport-google-oauth20": "^2.0.17",
+    "@types/passport-jwt": "^4.0.1",
     "@types/pg": "^8.20.0",
     "prisma": "^7.8.0",
     "tsx": "^4.22.4"
@@ -19,15 +24,19 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@dotenvx/dotenvx": "^1.71.0",
+    "@dotenvx/dotenvx": "^1.75.1",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
-    "@types/express": "^5.0.6",
+    "bcrypt": "^6.0.0",
     "body-parser": "^2.2.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "jose": "^6.2.3",
     "morgan": "^1.11.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-jwt": "^4.0.1",
     "pg": "^8.21.0"
   }
 }
