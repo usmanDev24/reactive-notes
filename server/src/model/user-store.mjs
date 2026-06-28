@@ -59,6 +59,18 @@ export default class UserStore {
       omit: {password: true}
     })
   }
+  async linkGoogleAccount(id,  provider, googleId,  avatarUrl) {
+    return prisma.user.update({
+      where: {id},
+      data : {
+        provider,
+        googleId,
+        isVerified : true,
+        avatarUrl
+      },
+      omit: {password: true}
+    })
+  }
   async findGoogleUser(googleId) {
     return prisma.user.findUnique({
       where: { googleId },
@@ -79,7 +91,7 @@ export default class UserStore {
     })
     return compare(password, user.password)
   }
-  
+
   async read(id, userName) {
     if (id) {
       return prisma.user.findUnique({
