@@ -12,22 +12,24 @@ datasource db {
   provider = "postgresql"
 }
 
+
 model User {
-  id            String        @id @default(uuid()) @db.Uuid()
-  userName      String        @unique @db.VarChar(256)
-  provider      String        @db.VarChar(256)
-  googleId      String?       @unique @db.VarChar(256)
-  password      String?       @db.Text()
-  email         String?       @db.VarChar(256)
-  isVerified    Boolean       @default(false)
-  firstName     String        @db.VarChar(256)
-  lastName      String        @db.VarChar(256)
-  avatarUrl     String?
-  createdAt     DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt     DateTime      @updatedAt @db.Timestamptz(3)
-  ownedFolders  Folder[]
-  sharedFolders FolderShare[]
-  notes         Notes[]
+  id             String        @id @default(uuid()) @db.Uuid()
+  userName       String?       @unique @db.VarChar(256)
+  provider       String        @db.VarChar(256)
+  googleId       String?       @unique @db.VarChar(256)
+  password       String?       @db.Text()
+  email          String?       @unique @db.VarChar(256)
+  isVerified     Boolean       @default(false)
+  firstName      String        @db.VarChar(256)
+  lastName       String        @db.VarChar(256)
+  avatarUrl      String?
+  createdAt      DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime      @updatedAt @db.Timestamptz(3)
+  ownedFolders   Folder[]
+  sharedFolders  FolderShare[]
+  notes          Notes[]
+  
 }
 
 model Folder {
