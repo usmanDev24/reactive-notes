@@ -7,5 +7,16 @@ export const router = Router();
 
 router.get('/me',  async (req, res, next) => {
   const user = await userStore.read(req.user.id)
-  res.json(user)
+  res.json({
+    success: true,
+    data: user
+  })
 })
+router.delete('/me', async (req, res, next) => {
+  const user = await userStore.delete(req.user.id)
+  res.json({
+    success: true,
+    message: "user account and all data deleted"
+  })
+}
+)
