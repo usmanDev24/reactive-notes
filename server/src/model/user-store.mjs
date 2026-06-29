@@ -113,4 +113,9 @@ export default class UserStore {
     })
     return null
   }
+  async deleteAll(confirm) {
+    if (confirm === "deleteAll") {
+      const toDelete =  await prisma.user.deleteMany()
+    }
+  }
 }

@@ -7,7 +7,9 @@
     "build": "rm -r ./dist/**/**; bunx --bun prisma generate && tsc && cp -r ./src/public ./dist",
     "start": "NODE_ENV=production bun ./dist/index.mjs",
     "dev": "NODE_ENV=development dotenvx run -f .env.dev -- bun ./src/index.mjs",
-    "prisma-dev": "NODE_ENV=development dotenvx run -f .env.dev -- bunx --bun prisma"
+    "prisma-dev": "NODE_ENV=development dotenvx run -f .env.dev -- bunx --bun prisma",
+    "test-prisma": " run -f .env.test -- bunx --bun prisma",
+    "test": "NODE_ENV=development dotenvx run -f .env.text -- vitest"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -17,8 +19,11 @@
     "@types/passport-google-oauth20": "^2.0.17",
     "@types/passport-jwt": "^4.0.1",
     "@types/pg": "^8.20.0",
+    "@types/supertest": "^7.2.0",
     "prisma": "^7.8.0",
-    "tsx": "^4.22.4"
+    "supertest": "^7.2.2",
+    "tsx": "^4.22.4",
+    "vitest": "^4.1.9"
   },
   "peerDependencies": {
     "typescript": "^6.0.3"
