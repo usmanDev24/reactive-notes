@@ -85,7 +85,13 @@ export default class UserStore {
     })
   }
 
-  async verifyPassword (email, password) {
+  async verifyPassword (email, userName, password) {
+    if (userName ) {
+        const user = await prisma.user.findUnique({
+        where: {userName}
+        })
+        return compare(password, user.password)
+    }
     const user = await prisma.user.findUnique({
       where: {email}
     })
