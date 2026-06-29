@@ -3,7 +3,8 @@ import { default as cors } from 'cors';
 import  { default as cookieParser} from 'cookie-parser';
 import { default as logger } from 'morgan';
 import { router as notesRouter} from './routes/notes.mjs'
-import { router as authRouter } from './routes/auth.mjs';
+import { router as authRouter, ensureAuthenticated } from './routes/auth.mjs';
+import { router as usersRouter } from './routes/users.mjs';
 import { AppError, globalErrorHandler } from './app-support.mjs';
 import passport from 'passport';
 const apiRouter = Router();
@@ -23,8 +24,10 @@ app.use(express.urlencoded({extended: true}))
 app.use(cookieParser());
 
 apiRouter.use(passport.initialize())
+
 apiRouter.use("/api/v1/notes", notesRouter)
 apiRouter.use("/api/v1/auth", authRouter)
+apiRouter.use('/api/v1/users', ensureAuthenticated, usersRouter)
 
 app.use(apiRouter)
 app.use(express.static(path.join(rootDir , "public")))
