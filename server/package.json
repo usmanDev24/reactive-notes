@@ -9,7 +9,7 @@
     "dev": "NODE_ENV=development dotenvx run -f .env.dev -- bun ./src/index.mjs",
     "prisma-dev": "NODE_ENV=development dotenvx run -f .env.dev -- bunx --bun prisma",
     "test-prisma": " run -f .env.test -- bunx --bun prisma",
-    "test": "NODE_ENV=development dotenvx run -f .env.text -- vitest"
+    "test": "NODE_ENV=development dotenvx run -f .env.test -- vitest"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
