@@ -12,51 +12,51 @@ datasource db {
   provider = "postgresql"
 }
 
-
 model User {
-  id             String        @id @default(uuid()) @db.Uuid()
-  userName       String?       @unique @db.VarChar(256)
-  provider       String        @db.VarChar(256)
-  googleId       String?       @unique @db.VarChar(256)
-  password       String?       @db.Text()
-  email          String?       @unique @db.VarChar(256)
-  isVerified     Boolean       @default(false)
-  firstName      String        @db.VarChar(256)
-  lastName       String        @db.VarChar(256)
-  avatarUrl      String?
-  createdAt      DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime      @updatedAt @db.Timestamptz(3)
-  ownedFolders   Folder[]
-  sharedFolders  FolderShare[]
-  notes          Notes[]
-  
+  id                String        @id @default(uuid(7)) @db.Uuid
+  userName          String?       @unique @db.VarChar(256)
+  provider          String        @db.VarChar(256)
+  googleId          String?       @unique @db.VarChar(256)
+  password          String?       @db.Text()
+  email             String?       @unique @db.VarChar(256)
+  unverified_email  String?       @db.VarChar(256)
+  verified          Boolean       @default(false)
+  verification_code Json?         @db.JsonB()
+  firstName         String        @db.VarChar(256)
+  lastName          String        @db.VarChar(256)
+  avatarUrl         String?
+  createdAt         DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime      @updatedAt @db.Timestamptz(3)
+  ownedFolders      Folder[]
+  sharedFolders     FolderShare[]
+  notes             Notes[]
 }
 
 model Folder {
-  id         String        @id @default(uuid()) @db.Uuid()
+  id         String        @id @default(uuid(7)) @db.Uuid
   name       String        @db.VarChar(256)
   notes      Notes[]
   createdAt  DateTime      @default(now()) @db.Timestamptz(3)
   user       User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String?       @db.Uuid()
+  userId     String?       @db.Uuid
   sharedWith FolderShare[]
 }
 
 model FolderShare {
-  id       String  @id @default(uuid()) @db.Uuid
+  id       String  @id @default(uuid(7)) @db.Uuid
   user     User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId   String? @db.Uuid()
+  userId   String? @db.Uuid
   role     String  @default("VIEWER")
   folder   Folder? @relation(fields: [folderId], references: [id], onDelete: Cascade)
-  folderId String? @db.Uuid()
+  folderId String? @db.Uuid
 
   @@unique([folderId, userId])
 }
 
 model Notes {
-  id        String   @id @default(uuid()) @db.Uuid()
-  title     String   @db.Text()
-  body      String   @db.Text()
+  id        String   @id @default(uuid(7)) @db.Uuid
+  title     String   @db.Text
+  body      String   @db.Text
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
   media     Media[]
@@ -67,11 +67,11 @@ model Notes {
 }
 
 model Media {
-  id        String   @id @default(uuid()) @db.Uuid()
+  id        String   @id @default(uuid(7)) @db.Uuid()
   type      String   @db.VarChar(256)
   name      String   @db.VarChar(256)
   url       String   @db.VarChar(256)
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   notes     Notes?   @relation(fields: [notesId], references: [id], onDelete: Cascade)
-  notesId   String?  @db.Uuid()
+  notesId   String?  @db.Uuid
 }

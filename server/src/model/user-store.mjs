@@ -3,7 +3,7 @@ import {hash, compare} from "bcrypt"
 
 
 export default class UserStore {
-  async create(userName, provider, googleId, password, email, isVerified, firstName, lastName, avatarUrl) {
+  async create(userName, provider, googleId, password, email, unverified_email, verified, firstName, lastName, avatarUrl) {
     if (password) {
       password = await hash(password, 10)
     }
@@ -14,7 +14,8 @@ export default class UserStore {
         googleId,
         password,
         email,
-        isVerified,
+        unverified_email,
+        verified,
         firstName,
         lastName,
         avatarUrl
@@ -65,7 +66,8 @@ export default class UserStore {
       data : {
         provider,
         googleId,
-        isVerified : true,
+        verified : true,
+        unverified_email: null,
         avatarUrl
       },
       omit: {password: true}

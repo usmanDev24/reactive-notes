@@ -21,7 +21,7 @@ describe("Testing Auth Endpoint", () => {
         password: "test",
         firstName: "test",
         lastName: "user",
-        email: "test@example.com", 
+        unverified_email: "test@example.com", 
       })
       .set("Content-Type", "application/json")
       .accept("application/json");
@@ -49,6 +49,7 @@ describe("Testing Auth Endpoint", () => {
       .get("/api/v1/users/me")
       .accept("application/json");
 
+      console.log(res.body)
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
   });
