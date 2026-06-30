@@ -8,7 +8,7 @@
     "start": "NODE_ENV=production bun ./dist/index.mjs",
     "dev": "NODE_ENV=development dotenvx run -f .env.dev -- bun ./src/index.mjs",
     "prisma-dev": "NODE_ENV=development dotenvx run -f .env.dev -- bunx --bun prisma",
-    "test-prisma": " run -f .env.test -- bunx --bun prisma",
+    "test-prisma": "NODE_ENV=development dotenvx run -f .env.test -- bunx --bun prisma",
     "test": "NODE_ENV=development dotenvx run -f .env.test -- vitest"
   },
   "devDependencies": {
