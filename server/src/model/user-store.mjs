@@ -52,16 +52,35 @@ export default class UserStore {
       data: { firstName, lastName, avatarUrl },
     });
   }
-  async setVerified(id) {
+  async setVerified(id, unverified_email) {
     return prisma.user.update({
       where: { id },
-      data: { isVerified: true },
+      data: {
+        verified: true,
+        email: unverified_email,
+        unverified_email: null,
+        verification_code: null,
+      },
+    });
+  }
+  async setCode(id, verification_code) {
+    return prisma.user.update({
+      where: { id },
+      data: {
+        verification_code,
+      },
+    });
+  }
+  async getCode(id) {
+    return prisma.user.findUnique({
+      where: { id },
+      select: { verification_code: true },
     });
   }
   async updateEmail(id, email) {
     return prisma.user.update({
       where: { id },
-      data: { email },
+      data: { unverified_email: email },
     });
   }
   async linkGoogleAccount(id, provider, googleId, avatarUrl) {
