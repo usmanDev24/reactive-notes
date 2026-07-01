@@ -4,9 +4,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "rm -r ./dist/**/**; bunx --bun prisma generate && tsc && cp -r ./src/public ./dist",
-    "start": "NODE_ENV=production bun ./dist/index.mjs",
+    "build": "rm -r ./dist/**/**; bun run prisma-prod migrate deploy & bun run prisma-prod generate && tsc && cp -r ./src/public ./dist",
+    "start": "NODE_ENV=production dotenvx run -f .env.prod -- bun ./dist/index.mjs",
     "dev": "NODE_ENV=development dotenvx run -f .env.dev -- bun ./src/index.mjs",
+    "prisma-prod": "NODE_ENV=production dotenvx run -f .env.prod -- bunx --bun prisma",
     "prisma-dev": "NODE_ENV=development dotenvx run -f .env.dev -- bunx --bun prisma",
     "test-prisma": "NODE_ENV=development dotenvx run -f .env.test -- bunx --bun prisma",
     "test": "NODE_ENV=development dotenvx run -f .env.test -- vitest"
@@ -30,6 +31,7 @@
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.75.1",
+    
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "bcrypt": "^6.0.0",
