@@ -1,4 +1,4 @@
-import { prisma } from "./prisma.mjs";
+import { prisma } from "./prisma.js";
 import {hash, compare} from "bcrypt"
 
 
@@ -19,8 +19,7 @@ export default class UserStore {
         firstName,
         lastName,
         avatarUrl
-      },
-      omit : {password: true}
+      }
     })
     return user
   }
@@ -28,36 +27,31 @@ export default class UserStore {
     if (password) password = await hash(password, 10)
     return prisma.user.update({
       where: {id}, 
-      data: {password},
-      omit: {password: true}
+      data: {password}
     })
   }
   async updateUserName (id, userName) {
     return prisma.user.update({
       where: {id}, 
-      data: {userName},
-      omit: {password: true}
+      data: {userName}
     })
   }
   async updateProfile (id, firstName, lastName, avatarUrl) {
     return prisma.user.update({
       where: {id}, 
-      data: {firstName, lastName, avatarUrl},
-      omit: {password: true}
+      data: {firstName, lastName, avatarUrl}
     })
   }
   async setVerified(id) {
     return prisma.user.update({
       where: {id}, 
-      data: {isVerified:  true},
-      omit: {password: true}
+      data: {isVerified:  true}
     })
   }
   async updateEmail (id, email) {
     return prisma.user.update({
       where: {id}, 
-      data: {email},
-      omit: {password: true}
+      data: {email}
     })
   }
   async linkGoogleAccount(id,  provider, googleId,  avatarUrl) {
@@ -69,33 +63,32 @@ export default class UserStore {
         verified : true,
         unverified_email: null,
         avatarUrl
-      },
-      omit: {password: true}
+      }
     })
   }
   async findGoogleUser(googleId) {
     return prisma.user.findUnique({
       where: { googleId },
-      omit: { password: true}
     })
   }
 
   async findEmail (email) {
     return prisma.user.findUnique({
       where: { email },
-      omit: { password: true}
     })
   }
 
   async verifyPassword (email, userName, password) {
     if (userName ) {
         const user = await prisma.user.findUnique({
-        where: {userName}
+        where: {userName},
+        select: {password: true}
         })
         return compare(password, user.password)
     }
     const user = await prisma.user.findUnique({
-      where: {email}
+      where: {email},
+      select: {password: true}
     })
     return compare(password, user.password)
   }
@@ -104,12 +97,11 @@ export default class UserStore {
     if (id) {
       return prisma.user.findUnique({
         where: { id },
-        omit: { password: true}
+
       })
     }
     return prisma.user.findUnique({
       where : { userName },
-      omit: { password: true}
     })
   }
 
