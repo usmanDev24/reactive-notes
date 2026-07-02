@@ -5,7 +5,6 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import { SignJWT } from "jose";
 import { BrevoClient } from "@getbrevo/brevo";
-
 import { randomInt } from "node:crypto";
 
 const brevo = new BrevoClient({ apiKey: process.env.BREVO_API_KEY });
@@ -14,11 +13,25 @@ const userStore = new UserStore();
 export const router = Router();
 
 export function ensureAuthenticated(req, res, next) {
-  passport.authenticate("jwt", { session: false })(req, res, next);
+  passport.authenticate("jwt", (err, user, info, status) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      res.status(401).json({
+        success: false,
+        message: "",
+      });
+      return;
+    }
+    req.user = user;
+    return next();
+  })(req, res, next);
 }
 
 router.post("/verify-code", ensureAuthenticated, async (req, res, next) => {
-  const savedCodeData = (await userStore.getCode(req.user.id)).verification_code;
+  const savedCodeData = (await userStore.getCode(req.user.id))
+    .verification_code;
   if (
     Number(req.body.code) === savedCodeData.code &&
     Date.now() - savedCodeData.createdAt < 1000 * 60 * 10
@@ -146,6 +159,7 @@ router.post("/login", async (req, res, next) => {
 
 router.get(
   "/google",
+  softAuthenticate,
   passport.authenticate("google", {
     scope: ["email", "profile"],
   }),
@@ -153,6 +167,7 @@ router.get(
 
 router.get(
   "/google/callback",
+  softAuthenticate,
   passport.authenticate("google", {
     session: false,
   }),
@@ -170,7 +185,7 @@ router.get(
 
     res.cookie(process.env.SESSION_COOKIE_NAME, sessJWT, {
       maxAge: 1000 * 60 * 60 * 24 * 10,
-      secure: true,
+      secure: process.env.PRODUCTION ? true : false,
       sameSite: "lax",
       path: "/",
       httpOnly: true,
@@ -184,37 +199,57 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      passReqToCallback: true,
     },
-    async (accessToken, refreshToken, profile, done) => {
-      profile = profile._json;
+    async (req, accessToken, refreshToken, profile, done) => {
+      try {
+        const googleProfile = profile._json;
 
-      const googleUserExist = await userStore.findGoogleUser(profile.sub);
-      const emailExist = await userStore.findEmail(profile.email);
-
-      if (googleUserExist) {
-        done(null, googleUserExist);
-      } else if (emailExist) {
-        const verifiedUser = await userStore.linkGoogleAccount(
-          emailExist.id,
-          "Google",
-          profile.sub,
-          profile.picture,
+        // 1. Check database for existing connections
+        const googleUserExist = await userStore.findGoogleUser(
+          googleProfile.sub,
         );
-        done(null, verifiedUser);
-      } else {
-        const user = await userStore.create(
+        const emailExist = await userStore.findEmail(googleProfile.email);
+
+        // Scenario A: User has logged in with this Google account before
+        if (googleUserExist) {
+          return done(null, googleUserExist);
+        }
+
+        // Scenario B: Link Google to an existing session OR an existing email
+        const isUnverifiedSession = req.user && !req.user.verified;
+
+        if (emailExist || isUnverifiedSession) {
+          const targetUserId = emailExist?.id || req.user?.id;
+
+          const verifiedUser = await userStore.linkGoogleAccount(
+            targetUserId,
+            "Google",
+            googleProfile.sub,
+            googleProfile.email,
+            req.user?.unverified_email,
+            googleProfile.picture,
+          );
+          return done(null, verifiedUser);
+        }
+
+        // Scenario C: Completely new user signup via Google
+        const newUser = await userStore.create(
           null,
           "Google",
-          profile.sub,
+          googleProfile.sub,
           null,
-          profile.email,
+          googleProfile.email,
           null,
           true,
-          profile.given_name,
-          profile.family_name,
-          profile.picture,
+          googleProfile.given_name,
+          googleProfile.family_name,
+          googleProfile.picture,
         );
-        done(null, user);
+
+        return done(null, newUser);
+      } catch (error) {
+        return done(error, null);
       }
     },
   ),
@@ -245,7 +280,19 @@ passport.use(
     },
   ),
 );
-
+export async function softAuthenticate(req, res, next) {
+  passport.authenticate("jwt", (err, user, info, status) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      req.user = null
+      return next()
+    }
+    req.user = user;
+    return next();
+  })(req, res, next);
+}
 const getMailHtml = function (code) {
   return `
       <!DOCTYPE html>

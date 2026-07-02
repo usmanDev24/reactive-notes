@@ -83,14 +83,15 @@ export default class UserStore {
       data: { unverified_email: email },
     });
   }
-  async linkGoogleAccount(id, provider, googleId, avatarUrl) {
+  async linkGoogleAccount(id, provider, googleId, email, unverified_email, avatarUrl) {
     return prisma.user.update({
       where: { id },
       data: {
         provider,
         googleId,
+        email,
         verified: true,
-        unverified_email: null,
+        unverified_email : (email === unverified_email) ? null : unverified_email,
         avatarUrl,
       },
     });
