@@ -225,59 +225,75 @@ passport.use(
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
       passReqToCallback: true,
     },
-    async (req, accessToken, refreshToken, profile, done) => {
-      try {
-        const googleProfile = profile._json;
-
-        // 1. Check database for existing connections
-        const googleUserExist = await userStore.findGoogleUser(
-          googleProfile.sub,
-        );
-        const emailExist = await userStore.findEmail(googleProfile.email);
-
-        // Scenario A: User has logged in with this Google account before
-        if (googleUserExist) {
-          return done(null, googleUserExist);
-        }
-
-        // Scenario B: Link Google to an existing session OR an existing email
-        const isUnverifiedSession = req.user && !req.user.verified;
-
-        if (emailExist || isUnverifiedSession) {
-          const targetUserId = emailExist?.id || req.user?.id;
-
-          const verifiedUser = await userStore.linkGoogleAccount(
-            targetUserId,
-            "Google",
-            googleProfile.sub,
-            googleProfile.email,
-            req.user?.unverified_email,
-            googleProfile.picture,
-          );
-          return done(null, verifiedUser);
-        }
-
-        // Scenario C: Completely new user signup via Google
-        const newUser = await userStore.create(
-          null,
-          "Google",
-          googleProfile.sub,
-          null,
-          googleProfile.email,
-          null,
-          true,
-          googleProfile.given_name,
-          googleProfile.family_name,
-          googleProfile.picture,
-        );
-
-        return done(null, newUser);
-      } catch (error) {
-        return done(error, null);
-      }
+    async (req, access_tok, refresh_tok, profile, done) => {
+      return googleVerifyCallback(
+        req,
+        access_tok,
+        refresh_tok,
+        profile,
+        done,
+        userStore,
+      );
     },
   ),
 );
+
+export async function googleVerifyCallback(
+  req,
+  accessToken,
+  refreshToken,
+  profile,
+  done,
+  userStore,
+) {
+  try {
+    const googleProfile = profile._json;
+
+    // 1. Check database for existing connections
+    const googleUserExist = await userStore.findGoogleUser(googleProfile.sub);
+    const emailExist = await userStore.findEmail(googleProfile.email);
+
+    // Scenario A: User has logged in with this Google account before
+    if (googleUserExist) {
+      return done(null, googleUserExist);
+    }
+
+    // Scenario B: Link Google to an existing session OR an existing email
+    const isUnverifiedSession = req.user && !req.user.verified;
+
+    if (emailExist || isUnverifiedSession) {
+      const targetUserId = emailExist?.id || req.user?.id;
+
+      const verifiedUser = await userStore.linkGoogleAccount(
+        targetUserId,
+        "Google",
+        googleProfile.sub,
+        googleProfile.email,
+        req.user?.unverified_email,
+        googleProfile.picture,
+      );
+      return done(null, verifiedUser);
+    }
+
+    // Scenario C: Completely new user signup via Google
+    const newUser = await userStore.create(
+      null,
+      "Google",
+      googleProfile.sub,
+      null,
+      googleProfile.email,
+      null,
+      true,
+      googleProfile.given_name,
+      googleProfile.family_name,
+      googleProfile.picture,
+    );
+
+    return done(null, newUser);
+  } catch (error) {
+    return done(error, null);
+  }
+}
 
 passport.use(
   new JwtStrategy(
@@ -310,8 +326,8 @@ export async function softAuthenticate(req, res, next) {
       return next(err);
     }
     if (!user) {
-      req.user = null
-      return next()
+      req.user = null;
+      return next();
     }
     req.user = user;
     return next();
