@@ -57,10 +57,16 @@ router.post(
     const code = randomInt(100000, 999999);
     const user = req.user;
 
-    if (user.verified && !user.unverified_email) {
+    if (user.verified) {
       res.json({
         success: true,
         message: "Already Verified",
+      });
+      return;
+    } else if (!user.unverified_email) {
+      res.json({
+        success: false,
+        message: "No Email to verify",
       });
       return;
     }
@@ -103,6 +109,24 @@ router.post("/logout", ensureAuthenticated, async (req, res, next) => {
 
 router.post("/register", async (req, res, next) => {
   const data = req.body;
+  const isUserNameExit = await userStore.read(null, data.userName);
+  if (isUserNameExit) {
+    res.json({
+      success: false,
+      isUserNameExit: true,
+      message: "userName already exist",
+    });
+    return;
+  }
+  const isEmailExist = await userStore.findEmail(data.unverified_email);
+  if (isEmailExist) {
+    res.json({
+      success: false,
+      isEmailExist: true,
+      message: "Email already exist",
+    });
+    return;
+  }
   const user = await userStore.create(
     data.userName,
     "Local",
@@ -117,18 +141,18 @@ router.post("/register", async (req, res, next) => {
   );
   res.json({
     success: true,
-    message: "new user account created",
+    message: "new user account registered",
   });
 });
 
 router.post("/login", async (req, res, next) => {
-  const verified = await userStore.verifyPassword(
+  const check = await userStore.verifyPassword(
     req.body.email,
     req.body.userName,
     req.body.password,
   );
 
-  if (!verified) {
+  if (!check) {
     res.json({
       success: false,
       message: "wrong credentials...",
@@ -149,7 +173,7 @@ router.post("/login", async (req, res, next) => {
 
   res.cookie(process.env.SESSION_COOKIE_NAME, sessJWT, {
     maxAge: 1000 * 60 * 60 * 24 * 10,
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
     httpOnly: true,
@@ -185,7 +209,7 @@ router.get(
 
     res.cookie(process.env.SESSION_COOKIE_NAME, sessJWT, {
       maxAge: 1000 * 60 * 60 * 24 * 10,
-      secure: process.env.PRODUCTION ? true : false,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
       httpOnly: true,

@@ -114,6 +114,7 @@ export default class UserStore {
         where: { userName },
         select: { password: true },
       });
+      if (!user) return false
       return compare(password, user.password);
     }
     const user = await prisma.user.findUnique({
